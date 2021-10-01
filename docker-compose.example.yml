@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: ./build/server/Dockerfile
+    ports:
+      - '${STORAGE_PORT}:50051'
+    depends_on:
+      - storage
+
+  storage:
+    build:
+      context: ./
+      dockerfile: ./build/storage/Dockerfile
+    ports:
+      - '${SERVER_PORT}:3000'
