@@ -28,7 +28,7 @@ Run `make build` to build both Go applications server and storage.
 
 To run docker compose stack just run `make up`.
 
-The prerender some URL you need to specify as query parameter, like this:
+To prerender some URL you need to specify it as a query parameter, like this:
 
 ```
 http://localhost:3000/render?url=https://www.example.com/
