@@ -4,15 +4,18 @@ services:
   server:
     build:
       context: ./
-      dockerfile: ./build/server/Dockerfile
+      dockerfile: ./docker/server/Dockerfile
+    environment:
+      STORAGE_URL: 'storage:50051'
+      PAGE_WAIT_TIME: 5
     ports:
-      - '${STORAGE_PORT}:50051'
-    depends_on:
+      - '${SERVER_PORT}:3000'
+    links:
       - storage
 
   storage:
     build:
       context: ./
-      dockerfile: ./build/storage/Dockerfile
+      dockerfile: ./docker/storage/Dockerfile
     ports:
-      - '${SERVER_PORT}:3000'
+      - '${STORAGE_PORT}:50051'

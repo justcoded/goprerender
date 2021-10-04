@@ -1,3 +1,5 @@
+.PHONY: init build build-server build-storage up run start down stop
+
 init:
 	@if [ ! -f '.env' ]; then \
 		echo 'Copying .env file...'; \
@@ -5,7 +7,7 @@ init:
 	fi;
 	@if [ ! -f 'src/.env' ]; then \
 		echo 'Copying src/.env file...'; \
-		cp .src/env.example src/.env; \
+		cp src/.env.example src/.env; \
 	fi;
 	@if [ ! -f 'docker-compose.yml' ]; then \
 		echo 'Copying docker-compose.yml file...'; \
