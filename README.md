@@ -1,6 +1,8 @@
 GO Prerender
 ===========================
 
+> Inspired by https://github.com/goprerender/prerender
+
 GO Prerender is a dockerized server app written in Golang that uses Headless Chrome to render HTML and JS files out of any web page. 
 The Prerender server listens for a http request, takes the URL and loads it in Headless Chrome, waits for the page to finish loading by waiting for the network to be idle, and then returns your content.
 
