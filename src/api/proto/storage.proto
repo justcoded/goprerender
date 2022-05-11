@@ -10,11 +10,13 @@ import "google/protobuf/timestamp.proto";
 // The storage service definition.
 service Storage {
   // Sends a store request message
-  rpc Store (StoreRequest) returns (StoreReply) {}
+  rpc Store(StoreRequest) returns (StoreReply) {}
   // Get a request from storage
-  rpc Get (GetRequest) returns (GetReplay) {}
+  rpc Get(GetRequest) returns (GetReplay) {}
   //
   rpc Len(LenRequest) returns (LenReplay) {}
+  //
+  rpc Purge(PurgeRequest) returns (PurgeReply) {}
 }
 
 message Page {
@@ -57,3 +59,7 @@ message LenRequest {}
 message LenReplay {
   int32 length = 1;
 }
+
+message PurgeRequest {}
+
+message PurgeReply {}

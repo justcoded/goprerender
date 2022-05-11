@@ -16,13 +16,13 @@ import (
 )
 
 const (
-	port = ":50051"
-	duration = time.Hour*24*7
+	port     = ":50051"
+	duration = time.Hour * 24 * 7
 )
 
 var gc = gcache.New(100000).
-		LRU().
-		Build()
+	LRU().
+	Build()
 
 // server is used to implement Saver.
 type server struct {
@@ -51,12 +51,17 @@ func (s *server) Get(ctx context.Context, in *storage.GetRequest) (*storage.GetR
 }
 
 func (s *server) Len(ctx context.Context, in *storage.LenRequest) (*storage.LenReplay, error) {
-	log.Printf("Received: Len request")
+	//log.Printf("Received: Len request")
 	return &storage.LenReplay{Length: int32(gc.Len(true))}, nil
 }
 
-func main() {
+func (s *server) Purge(ctx context.Context, in *storage.PurgeRequest) (*storage.PurgeReply, error) {
+	gc.Purge()
 
+	return &storage.PurgeReply{}, nil
+}
+
+func main() {
 	ctx := context.Background()
 	lis, err := net.Listen("tcp", port)
 	if err != nil {

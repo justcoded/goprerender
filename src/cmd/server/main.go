@@ -52,7 +52,7 @@ func main() {
 	logger.Infof("Starting server...")
 	time.Sleep(5 * time.Second)
 
-	logger.Infof("Connecting to storage %v",  address)
+	logger.Infof("Connecting to storage %v", address)
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -155,6 +155,12 @@ func handleRequest(ctx context.Context, pc cachers.Сacher, logger prLog.Logger)
 		newTabCtx, cancel := chromedp.NewContext(ctx)
 		ctx, cancel := context.WithTimeout(newTabCtx, time.Second*60)
 		defer cancel()
+
+		req := c.Request
+
+		if req.Header.Get("Cache-Control") == "must-revalidate" || req.Header.Get("Clear-Site-Data") != "" {
+			pc.Purge()
+		}
 
 		res, err := renderer.DoRender(ctx, queryString, pc, false, logger)
 		if err != nil {
