@@ -47,7 +47,16 @@ func (s server) Len() int {
 	req := storage.LenRequest{}
 	result, err := s.gw.Len(ctx, &req)
 	if err != nil {
-		log.Fatal( err)
+		log.Fatal(err)
 	}
 	return int(result.GetLength())
+}
+
+func (s server) Purge() {
+	ctx := context.Background()
+	req := storage.PurgeRequest{}
+	_, err := s.gw.Purge(ctx, &req)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

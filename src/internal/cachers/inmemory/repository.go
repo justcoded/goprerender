@@ -12,7 +12,7 @@ type repository struct {
 }
 
 func New(gc gcache.Cache) cachers.Сacher {
-	return repository{gc: gc, dd: time.Hour*24*7}
+	return repository{gc: gc, dd: time.Hour * 24 * 7}
 }
 
 func (r repository) Put(key string, data []byte) error {
@@ -29,4 +29,8 @@ func (r repository) Get(key string) ([]byte, error) {
 
 func (r repository) Len() int {
 	return r.gc.Len(true)
+}
+
+func (r repository) Purge() {
+	r.gc.Purge()
 }

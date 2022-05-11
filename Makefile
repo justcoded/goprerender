@@ -1,4 +1,4 @@
-.PHONY: init build build-server build-storage up run start down stop
+.PHONY: init build build-server build-storage up run start down stop restart
 
 init:
 	@if [ ! -f '.env' ]; then \
@@ -34,3 +34,5 @@ run:
 down: stop
 stop:
 	docker-compose down
+
+restart: stop run
