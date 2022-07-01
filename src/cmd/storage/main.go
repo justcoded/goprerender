@@ -11,14 +11,16 @@ import (
 	"os"
 	"os/signal"
 	"prerender/pkg/api/storage"
+	"strconv"
 	"syscall"
 	"time"
 )
 
 const (
-	port     = ":50051"
-	duration = time.Hour * 24 * 7
+	port = ":50051"
 )
+
+var duration = time.Hour * 24 * 7
 
 var gc = gcache.New(100000).
 	LRU().
@@ -42,11 +44,20 @@ func (s *server) Store(ctx context.Context, in *storage.StoreRequest) (*storage.
 func (s *server) Get(ctx context.Context, in *storage.GetRequest) (*storage.GetReplay, error) {
 	//log.Printf("Received: %v", in.GetHash())
 	value, err := gc.Get(in.Hash)
+
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 	return &storage.GetReplay{
 		Data: value.([]byte),
+	}, nil
+}
+
+func (s *server) Remove(ctx context.Context, in *storage.RemoveRequest) (*storage.RemoveReply, error) {
+	//log.Printf("Received: %v", in.GetHash())
+	result := gc.Remove(in.Hash)
+	return &storage.RemoveReply{
+		Result: result,
 	}, nil
 }
 
@@ -62,6 +73,16 @@ func (s *server) Purge(ctx context.Context, in *storage.PurgeRequest) (*storage.
 }
 
 func main() {
+	durationStr, exists := os.LookupEnv("CACHE_EXPIRATION_TIME")
+	if exists && durationStr != "" {
+		durationHours, err := strconv.Atoi(durationStr)
+		if err != nil {
+			log.Fatalf("failed to parse env: %v", err)
+		}
+
+		duration = time.Hour * time.Duration(durationHours)
+	}
+
 	ctx := context.Background()
 	lis, err := net.Listen("tcp", port)
 	if err != nil {

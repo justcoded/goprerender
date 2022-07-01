@@ -5,9 +5,8 @@ services:
     build:
       context: ./
       dockerfile: ./docker/server/Dockerfile
-    environment:
-      STORAGE_URL: 'storage:50051'
-      PAGE_WAIT_TIME: 5
+    env_file:
+      - src/.env
     ports:
       - '${SERVER_PORT}:3000'
     links:
@@ -17,5 +16,7 @@ services:
     build:
       context: ./
       dockerfile: ./docker/storage/Dockerfile
+    env_file:
+      - src/.env
     ports:
       - '${STORAGE_PORT}:50051'

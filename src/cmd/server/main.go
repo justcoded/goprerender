@@ -20,6 +20,7 @@ import (
 	"prerender/internal/healthcheck"
 	"prerender/internal/renderer"
 	"prerender/internal/sitemap"
+	"prerender/internal/urlparser"
 	"prerender/pkg/api/storage"
 	prLog "prerender/pkg/log"
 	"time"
@@ -149,7 +150,6 @@ func startCroneRefresh(ctx context.Context, c *cron.Cron, pc cachers.Сacher, lo
 
 func handleRequest(ctx context.Context, pc cachers.Сacher, logger prLog.Logger) routing.Handler {
 	return func(c *routing.Context) error {
-
 		queryString := c.Request.URL.Query().Get("url")
 
 		newTabCtx, cancel := chromedp.NewContext(ctx)
@@ -158,8 +158,18 @@ func handleRequest(ctx context.Context, pc cachers.Сacher, logger prLog.Logger)
 
 		req := c.Request
 
-		if req.Header.Get("Cache-Control") == "must-revalidate" || req.Header.Get("Clear-Site-Data") != "" {
+		if req.Header.Get("Clear-Site-Data") == "*" {
 			pc.Purge()
+		} else if req.Header.Get("Cache-Control") == "must-revalidate" {
+			key, err := urlparser.GetHashKey(queryString)
+			if err != nil {
+				return err
+			}
+
+			_, err = pc.Remove(key)
+			if err != nil {
+				return err
+			}
 		}
 
 		res, err := renderer.DoRender(ctx, queryString, pc, false, logger)

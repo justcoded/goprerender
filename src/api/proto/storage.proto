@@ -14,6 +14,8 @@ service Storage {
   // Get a request from storage
   rpc Get(GetRequest) returns (GetReplay) {}
   //
+  rpc Remove(RemoveRequest) returns (RemoveReply) {}
+  //
   rpc Len(LenRequest) returns (LenReplay) {}
   //
   rpc Purge(PurgeRequest) returns (PurgeReply) {}
@@ -48,9 +50,17 @@ message GetRequest {
   string hash = 1;
 }
 
+message RemoveRequest {
+  string hash = 1;
+}
+
 // Tre replay message
 message GetReplay {
   bytes data = 1;
+  bool result = 2;
+}
+
+message RemoveReply {
   bool result = 2;
 }
 

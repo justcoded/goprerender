@@ -42,6 +42,13 @@ func (s server) Get(key string) ([]byte, error) {
 	return result.GetData(), err
 }
 
+func (s server) Remove(key string) (bool, error) {
+	ctx := context.Background()
+	req := storage.RemoveRequest{Hash: key}
+	result, err := s.gw.Remove(ctx, &req)
+	return result.GetResult(), err
+}
+
 func (s server) Len() int {
 	ctx := context.Background()
 	req := storage.LenRequest{}
