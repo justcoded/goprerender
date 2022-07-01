@@ -40,3 +40,5 @@ fabric.properties
 /storage
 .env
 docker-compose.yml
+/bin
+/pkg

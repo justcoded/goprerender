@@ -35,12 +35,12 @@ To prerender some URL you need to specify it as a query parameter, like this:
 http://localhost:3000/render?url=https://www.example.com/
 ```
 
-#### Purge cache
+#### Clear cache
 
 Cached pages are valid for 7 days by default, but you can force clear it.
 
-To purge all cached pages you need to pass the `Cache-Control` header
-with the value `must-revalidate` or the `Clear-Site-Data` header with any value.
+To purge all cached pages you need to send the`Clear-Site-Data` header with the value `*`. To remove only one page from
+cache, just pass `Cache-Control` header with the value `must-revalidate`.
 
 Just send a usual request to
 
@@ -48,13 +48,13 @@ Just send a usual request to
 http://localhost:3000/render?url=https://www.example.com/
 ```
 
-With this header
+With this header, to remove the cached page
 
 ```
 Cache-Control: must-revalidate
 ```
 
-or
+or, to flush all cache
 
 ```
 Clear-Site-Data: *

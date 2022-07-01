@@ -27,6 +27,10 @@ func (r repository) Get(key string) ([]byte, error) {
 	return value.([]byte), nil
 }
 
+func (r repository) Remove(key string) (bool, error) {
+	return r.gc.Remove(key), nil
+}
+
 func (r repository) Len() int {
 	return r.gc.Len(true)
 }

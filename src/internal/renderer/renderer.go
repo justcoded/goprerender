@@ -2,28 +2,25 @@ package renderer
 
 import (
 	"context"
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/chromedp/cdproto/dom"
 	"github.com/chromedp/chromedp"
 	"net/http"
-	"net/url"
 	"os"
 	"prerender/internal/archive"
 	"prerender/internal/cachers"
+	"prerender/internal/urlparser"
 	"prerender/pkg/log"
 	"strconv"
-	"strings"
 	"time"
 )
 
 func DoRender(ctx context.Context, queryString string, pc cachers.Сacher, force bool, logger log.Logger) (string, error) {
 	waitSecondsStr, exists := os.LookupEnv("PAGE_WAIT_TIME")
-
 	waitSeconds := 5
 
-	if exists {
+	if exists && waitSecondsStr != "" {
 		var err error
 		waitSeconds, err = strconv.Atoi(waitSecondsStr)
 
@@ -32,26 +29,19 @@ func DoRender(ctx context.Context, queryString string, pc cachers.Сacher, force
 		}
 	}
 
-	u, err := url.Parse(queryString)
+	requestURL, hostPath, err := urlparser.ParseUrl(queryString)
 	if err != nil {
 		logger.Error(err)
 	}
 
-	requestURL := ""
-	hostPath := ""
-
-	if u.Path != "/" && strings.HasSuffix(u.Path, "/") {
-		path := strings.TrimRight(u.Path, "/")
-		requestURL = u.Scheme + "://" + u.Host + path
-		hostPath = u.Host + path
-	} else {
-		requestURL = queryString
-		hostPath = u.Host + u.Path
+	key, err := urlparser.GetHashKey(queryString)
+	if err != nil {
+		logger.Error(err)
 	}
 
-	var res string
-	key := fmt.Sprintf("%x", sha256.Sum256([]byte(hostPath)))
 	value, err := pc.Get(key)
+	var res string
+
 	if force || err != nil {
 		err := chromedp.Run(ctx,
 			chromedp.Navigate(requestURL),
