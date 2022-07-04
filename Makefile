@@ -33,6 +33,6 @@ run:
 
 down: stop
 stop:
-	docker-compose down
+	docker-compose down -v
 
 restart: stop run
